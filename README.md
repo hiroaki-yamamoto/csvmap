@@ -10,10 +10,11 @@
   made/received in 1 time.
 
 ## How to use
-  First, you will need to create mapping configuration files. You can see the
-  example at [here](example).
+  This script is for 'professionals', and the general instruction is omitted.
+  However, you will need to create mapping configuration as yaml. You can see
+  the example at [here](example). Then, csvmap.py is the script.
 
-  As reference, here is the description:
+  As reference, here is the description of the setting:
 
 ### fieldnames
   A list of the fields. This will be passed `fieldnames` at `csv.DictWriter` of
@@ -26,9 +27,6 @@
   value at `default_value`.
 
   Currently, this supports only OneToOne transformation.
-
-### default_value
-  If the value is empty (or removed), this default_value is set.
 
 ## Contribution
   Issues / PR is acceptable.
