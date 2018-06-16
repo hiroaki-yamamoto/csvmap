@@ -3,10 +3,10 @@
 
 """CSV Mapper."""
 
-import click
 import sys
-import yaml
-from csv import DictReader, DictWriter
+
+
+from csv import DictWriter
 
 
 class Mapper(object):
@@ -30,28 +30,13 @@ class Mapper(object):
             ret.append(out_el)
         return ret
 
-    def generate(self, dctlst, out):
+    def generate(self, dctlst, out_path):
         """Generate the csv."""
+        sep_out = self.mapper.get("sep_out") or ","
+        enc_out = self.mapper.get("enc_out") or "utf-8"
+        out = sys.stdout if out_path == "--" \
+            else open(out_path, "w", encoding=enc_out)
         mapped = self.map(dctlst)
-        writer = DictWriter(out, self.mapper["fieldnames"])
+        writer = DictWriter(out, self.mapper["fieldnames"], delimiter=sep_out)
         writer.writeheader()
         writer.writerows(mapped)
-
-
-@click.command()
-@click.option(
-    "-o", "--out", type=click.File("w"), default=sys.stdout,
-    help="Output path"
-)
-@click.argument("map_cfg", type=click.File("r"))
-@click.argument("file_in", type=click.File("r"))
-def main(file_in, map_cfg, out):
-    """Entrypoint."""
-    mapper = Mapper(yaml.load(map_cfg))
-    csvreader = DictReader(file_in)
-    mapper.generate(csvreader, out)
-    print("Done")
-
-
-if __name__ == '__main__':
-    main()
