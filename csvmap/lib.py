@@ -23,10 +23,21 @@ class Mapper(object):
             out_el = {}
             for (key, value) in self.mapper.get("default_value", {}).items():
                 out_el.setdefault(key, value)
-            for (src, dst) in self.mapper["map"].items():
+            for (src, dst_item) in self.mapper["map"].items():
                 value = item.get(src)
-                if value is not None:
-                    out_el[dst] = value
+                dst = dst_item
+                suffix = None
+                prefix = None
+                if isinstance(dst_item, dict):
+                    dst = dst_item["dest"]
+                    suffix = dst_item.get("suffix")
+                    prefix = dst_item.get("prefix")
+                if value:
+                    out_el[dst] = ("{}{}{}").format(
+                        suffix or "",
+                        prefix or "",
+                        value
+                    )
             ret.append(out_el)
         return ret
 
