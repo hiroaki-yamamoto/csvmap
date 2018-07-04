@@ -6,7 +6,7 @@ import sys
 from os import path
 from setuptools import setup, find_packages
 
-dependencies = ["click", "PyYAML"]
+dependencies = ["click", "PyYAML", "dateutils"]
 name = "csvmap"
 desc = "Simple CSV Mapper"
 license = "MIT License"

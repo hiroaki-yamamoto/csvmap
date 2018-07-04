@@ -5,6 +5,7 @@
 
 import sys
 
+import dateutil.parser as dateparser
 
 from csv import DictWriter
 
@@ -26,18 +27,26 @@ class Mapper(object):
             for (src, dst_item) in self.mapper["map"].items():
                 value = item.get(src)
                 dst = dst_item
-                suffix = None
-                prefix = None
+                suffix = ""
+                prefix = ""
+                format = ""
                 if isinstance(dst_item, dict):
                     dst = dst_item["dest"]
-                    suffix = dst_item.get("suffix")
-                    prefix = dst_item.get("prefix")
+                    suffix = dst_item.get("suffix", "")
+                    prefix = dst_item.get("prefix", "")
+                    format = dst_item.get("format", "")
                 if value:
                     out_el[dst] = ("{}{}{}").format(
-                        suffix or "",
-                        prefix or "",
+                        suffix,
+                        prefix,
                         value
                     )
+                    if format and format[0:5] == "date:":
+                        out_el[dst] = dateparser.parse(out_el[dst]).date()
+                        if format[5:] == "iso":
+                            out_el[dst] = out_el[dst].isoformat()
+                        else:
+                            out_el[dst] = out_el[dst].strftime(format[5:])
             ret.append(out_el)
         return ret
 
@@ -51,3 +60,5 @@ class Mapper(object):
         writer = DictWriter(out, self.mapper["fieldnames"], delimiter=sep_out)
         writer.writeheader()
         writer.writerows(mapped)
+        if out is not sys.stdout:
+            out.close()
