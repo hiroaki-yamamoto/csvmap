@@ -24,10 +24,11 @@ def main(file_in_path, map_cfg, out):
     sep_in = config.get("sep_in") or ","
     enc_in = config.get('enc_in') or "utf-8"
     mapper = Mapper(config)
+    csvreader = None
 
     with open(file_in_path, "r", encoding=enc_in) as file_in:
-        csvreader = DictReader(file_in, delimiter=sep_in)
-        mapper.generate(csvreader, out)
+        csvreader = list(DictReader(file_in, delimiter=sep_in))
+    mapper.generate(csvreader, out)
     print("Done")
 
 
